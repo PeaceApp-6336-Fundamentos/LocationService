@@ -5,6 +5,11 @@ import com.upc.pre.peaceapp.location.interfaces.rest.resources.LocationResource;
 
 public class LocationResourceFromEntityAssembler {
     public static LocationResource toResource(Location l) {
-        return new LocationResource(l.id(), l.latitude(), l.longitude(), l.address(), l.district());
+        return new LocationResource(
+                l.getId(),
+                l.getLatitude(),
+                l.getLongitude(),
+                l.getIdReport()
+        );
     }
 }

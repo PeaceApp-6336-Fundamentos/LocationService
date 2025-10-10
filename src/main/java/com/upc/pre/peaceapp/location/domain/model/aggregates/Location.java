@@ -1,37 +1,35 @@
 package com.upc.pre.peaceapp.location.domain.model.aggregates;
 
-public class Location {
-    private Long id;
-    private Double latitude;
-    private Double longitude;
-    private String address;
-    private String district;
+import com.upc.pre.peaceapp.shared.documentation.models.AuditableAbstractAggregateRoot;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-    private Location(Double latitude, Double longitude, String address, String district) {
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.address = address;
-        this.district = district;
+@Getter
+@Setter
+@NoArgsConstructor
+@Entity
+@Table(name = "locations")
+public class Location extends AuditableAbstractAggregateRoot {
+    @Getter
+    @Setter
+    @Column(name="latitude", nullable = false, length = 30)
+    private String latitude;
+    @Getter
+    @Setter
+    @Column(name="longitude", nullable = false, length = 30)
+    private String longitude;
+    @Getter
+    @Setter
+    @Column(name="id_report", nullable = false)
+    private Long idReport;
+
+    public Location(String aLatitude, String aLongitude, Long idReport) {
+        this.latitude = aLatitude;
+        this.longitude = aLongitude;
+        this.idReport = idReport;
     }
-
-    public static Location create(Double latitude, Double longitude, String address, String district) {
-        return new Location(latitude, longitude, address, district);
-    }
-
-    public void update(Double latitude, Double longitude, String address, String district) {
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.address = address;
-        this.district = district;
-    }
-
-    // Getters estilo DDD
-    public Long id() { return id; }
-    public Double latitude() { return latitude; }
-    public Double longitude() { return longitude; }
-    public String address() { return address; }
-    public String district() { return district; }
-
-    // Setter para mapeo infra
-    public void setId(Long id) { this.id = id; }
 }

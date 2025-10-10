@@ -5,6 +5,6 @@ import com.upc.pre.peaceapp.location.interfaces.rest.resources.CreateLocationRes
 
 public class CreateLocationCommandFromResourceAssembler {
     public static CreateLocationCommand toCommand(CreateLocationResource r) {
-        return new CreateLocationCommand(r.latitude(), r.longitude(), r.address(), r.district());
+        return new CreateLocationCommand(r.latitude(), r.longitude(), r.idReport());
     }
 }

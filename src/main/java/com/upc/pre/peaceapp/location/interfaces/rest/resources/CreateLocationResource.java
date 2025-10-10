@@ -1,3 +1,3 @@
 package com.upc.pre.peaceapp.location.interfaces.rest.resources;
 
-public record CreateLocationResource(Double latitude, Double longitude, String address, String district) { }
+public record CreateLocationResource(String latitude, String longitude, Long idReport) { }
