@@ -2,6 +2,7 @@ package com.upc.pre.peaceapp.location.application.internal.commandservices;
 
 import com.upc.pre.peaceapp.location.domain.model.aggregates.Location;
 import com.upc.pre.peaceapp.location.domain.model.commands.CreateLocationCommand;
+import com.upc.pre.peaceapp.location.domain.model.commands.DeleteAllLocationsByIdReportCommand;
 import com.upc.pre.peaceapp.location.domain.services.LocationCommandService;
 import com.upc.pre.peaceapp.location.infrastructure.persistence.jpa.LocationRepository;
 import org.springframework.stereotype.Service;
@@ -28,5 +29,9 @@ public class LocationCommandServiceImpl implements LocationCommandService {
 
         var savedLocation = locationRepository.save(location);
         return Optional.of(savedLocation);
+    }
+    @Override
+    public void handle(DeleteAllLocationsByIdReportCommand command) {
+        locationRepository.deleteAllByIdReport(command.idReport());
     }
 }

@@ -1,6 +1,7 @@
 package com.upc.pre.peaceapp.location.infrastructure.persistence.jpa;
 
 import com.upc.pre.peaceapp.location.domain.model.aggregates.Location;
+import com.upc.pre.peaceapp.location.domain.model.commands.DeleteAllLocationsByIdReportCommand;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -15,4 +16,5 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
            ORDER BY reportCount DESC
            """)
     List<Object[]> findDangerousLocations();
+    void deleteAllByIdReport(Long idReport);
 }
