@@ -19,56 +19,106 @@ import org.springframework.context.annotation.Configuration;
 @EnableRabbit
 public class RabbitMQConfig {
 
-    @Value("${app.broker.exchange.report}")
-    private String exchangeName;
+    // -------------------------------
+    // REPORT EXCHANGE (EVENTOS DEL REPORTE)
+    // -------------------------------
 
+    @Value("${app.broker.exchange.report}")
+    private String reportExchangeName;
+
+    // ---- EVENTO: APPROVED ----
+    @Value("${app.broker.queue.report.approved}")
+    private String reportApprovedQueue;
+
+    @Value("${app.broker.routing-key.report.approved}")
+    private String reportApprovedRK;
+
+    // ---- EVENTO: DELETED ----
     @Value("${app.broker.queue.report.deleted}")
-    private String queueName;
+    private String reportDeletedQueue;
 
     @Value("${app.broker.routing-key.report.deleted}")
-    private String routingKey;
-    @Bean
-    public TopicExchange locationExchange() {
-        return new TopicExchange("location.exchange");
-    }
+    private String reportDeletedRK;
 
-    @Bean
-    public Queue locationDeletedQueue() {
-        return new Queue("location.deleted.queue", true);
-    }
+    // ---- EVENTO: REJECTED ----
+    @Value("${app.broker.queue.report.rejected}")
+    private String reportRejectedQueue;
 
-    @Bean
-    public Binding locationDeletedBinding() {
-        return BindingBuilder.bind(locationDeletedQueue())
-                .to(locationExchange())
-                .with("location.deleted");
-    }
+    @Value("${app.broker.routing-key.report.rejected}")
+    private String reportRejectedRK;
 
+
+    // -------------------------------
+    // EXCHANGE DEL REPORTE
+    // -------------------------------
     @Bean
     public TopicExchange reportExchange() {
-        return new TopicExchange(exchangeName);
+        return new TopicExchange(reportExchangeName);
+    }
+
+
+    // -------------------------------
+    // QUEUE + BINDINGS : APPROVED
+    // -------------------------------
+    @Bean
+    public Queue reportApprovedQueue() {
+        return new Queue(reportApprovedQueue, true);
     }
 
     @Bean
+    public Binding reportApprovedBinding() {
+        return BindingBuilder.bind(reportApprovedQueue())
+                .to(reportExchange())
+                .with(reportApprovedRK);
+    }
+
+
+    // -------------------------------
+    // QUEUE + BINDINGS : DELETED
+    // -------------------------------
+    @Bean
     public Queue reportDeletedQueue() {
-        return new Queue(queueName, true);
+        return new Queue(reportDeletedQueue, true);
     }
 
     @Bean
     public Binding reportDeletedBinding() {
         return BindingBuilder.bind(reportDeletedQueue())
                 .to(reportExchange())
-                .with(routingKey);
+                .with(reportDeletedRK);
+    }
+
+
+    // -------------------------------
+    // QUEUE + BINDINGS : REJECTED
+    // -------------------------------
+    @Bean
+    public Queue reportRejectedQueue() {
+        return new Queue(reportRejectedQueue, true);
     }
 
     @Bean
-    public MessageConverter jsonMessageConverter() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        return new Jackson2JsonMessageConverter(objectMapper);
+    public Binding reportRejectedBinding() {
+        return BindingBuilder.bind(reportRejectedQueue())
+                .to(reportExchange())
+                .with(reportRejectedRK);
     }
 
+
+    // -------------------------------
+    // JSON CONVERTER
+    // -------------------------------
+    @Bean
+    public MessageConverter jsonMessageConverter() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return new Jackson2JsonMessageConverter(mapper);
+    }
+
+    // -------------------------------
+    // TEMPLATE
+    // -------------------------------
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
@@ -76,6 +126,9 @@ public class RabbitMQConfig {
         return template;
     }
 
+    // -------------------------------
+    // LISTENER FACTORY
+    // -------------------------------
     @Bean
     public RabbitListenerContainerFactory<?> rabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
