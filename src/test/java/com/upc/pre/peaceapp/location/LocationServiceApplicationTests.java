@@ -1,4 +1,4 @@
-package com.upc.pre.peaceapp.location_service;
+package com.upc.pre.peaceapp.location;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
